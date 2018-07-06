@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/Programs/programming/opencv/build2/OpenCVConfig-version.cmake" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Programs/programming/opencv/build2/OpenCVConfig.cmake" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Programs/programming/opencv/build2/OpenCVModules.cmake" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PointType.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/detector.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/detector.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/PointType.h" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file://E:/Programs/programming/MINGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include" />
+          <root url="file://E:/Programs/programming/MINGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed" />
+          <root url="file://E:/Programs/programming/MINGW/mingw64/x86_64-w64-mingw32/include" />
+          <root url="file://E:/Programs/programming/opencv/build2" />
+          <root url="file://E:/Programs/programming/opencv/sources/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/ts/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/shape/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/imgproc/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/flann/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/highgui/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/stitching/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/superres/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/dnn/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/features2d/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/core/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/calib3d/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/ml/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/imgcodecs/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/videostab/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/video/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/videoio/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/photo/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/objdetect/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://E:/Programs/programming/MINGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include" />
+          <root url="file://E:/Programs/programming/MINGW/mingw64/lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed" />
+          <root url="file://E:/Programs/programming/MINGW/mingw64/x86_64-w64-mingw32/include" />
+          <root url="file://E:/Programs/programming/opencv/build2" />
+          <root url="file://E:/Programs/programming/opencv/sources/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/ts/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/shape/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/imgproc/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/flann/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/highgui/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/stitching/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/superres/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/dnn/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/features2d/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/core/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/calib3d/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/ml/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/imgcodecs/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/videostab/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/video/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/videoio/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/photo/include" />
+          <root url="file://E:/Programs/programming/opencv/sources/modules/objdetect/include" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
