@@ -25,7 +25,7 @@ int capture(PointType centers[], Mat frame){
     // Check VideoCapture documentation.
     Mat planes[3];
     split(frame, planes);
-    imshow("this is you, smile! :)", frame);
+//    imshow("this is you, smile! :)", frame);
 
     Mat yellow = (planes[2] + planes[1])/2 - planes[0];
     yellow = yellow > 150;
@@ -53,11 +53,11 @@ int capture(PointType centers[], Mat frame){
     morphologyEx(blue, opened_blue, MORPH_OPEN, ell);
 
 
-    imshow("final blue", opened_blue);
-    imshow("yellow", yellow);
+//    imshow("final blue", opened_blue);
+//    imshow("yellow", yellow);
 
 
-//    imshow("blue", opened_blue);
+//    ("blue", opened_blue);
 
     Mat yellow_centroids;
     Mat yellow_image_labeled;
