@@ -1,0 +1,1 @@
+-lopengl32 -lglu32 external/glfw-3.1.2/src/libglfw3.a external/libGLEW_1130.a external/assimp-3.0.1270/code/libassimp.a -lopengl32 -lglu32 external/assimp-3.0.1270/contrib/zlib/libzlib.a -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

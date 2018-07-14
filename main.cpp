@@ -436,7 +436,7 @@ void stat_calib(Mat frame){
     double lambda = 10;
     double fap[3][1] = {{1000}, {1000}, {1000}};
     double da = 100;
-    while (da > 1.00e-10 && itr<100000){
+    while (da > 1.00e-8 && itr<100000){
         update_jac(jac, a, t);
         update_f(func, a, d, t);
         calc_delta(jac, func, lambda, delta);
@@ -467,6 +467,7 @@ void stat_calib(Mat frame){
 
 }
 
+Vctr camera_location;
 
 void renderScene(void) {
     // Clear Color and Depth Buffers
@@ -480,7 +481,9 @@ void renderScene(void) {
 //    make camera look at the origin with angle
     // Set the camera
 
-    gluLookAt(	results.x / (-10), results.y / (-10), results.z / (-1 * 10 * 4),
+    camera_location = (camera_location + results)/2;
+
+    gluLookAt(	camera_location.x / (-10), camera_location.y / (-10), camera_location.z / (-1 * 10 * 4),
                   0, 0.0f,  0,
                   0.0f, 1.0f,  0.0f);
 
@@ -505,7 +508,9 @@ int main(int argc, char **argv){
     results.x = 60;
     results.y = -50;
     results.z = -200;
-
+    camera_location.x = 60;
+    camera_location.y = -50;
+    camera_location.z = -200;
     // open the default camera, use something different from 0 otherwise;
     // Check VideoCapture documentation.
     std::thread gl_thread(start_gl,argc, argv);

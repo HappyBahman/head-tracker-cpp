@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E remove -f CMakeFiles\tutorial06_keyboard_and_mouse.dir/objects.a
+E:\Programs\programming\MINGW\mingw64\bin\ar.exe cr CMakeFiles\tutorial06_keyboard_and_mouse.dir/objects.a @CMakeFiles\tutorial06_keyboard_and_mouse.dir\objects1.rsp
+E:\Programs\programming\MINGW\mingw64\bin\g++.exe    -Wl,--whole-archive CMakeFiles\tutorial06_keyboard_and_mouse.dir/objects.a -Wl,--no-whole-archive  -o tutorial06_keyboard_and_mouse.exe -Wl,--out-implib,libtutorial06_keyboard_and_mouse.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\tutorial06_keyboard_and_mouse.dir\linklibs.rsp

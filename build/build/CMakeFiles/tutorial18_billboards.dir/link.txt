@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E remove -f CMakeFiles\tutorial18_billboards.dir/objects.a
+E:\Programs\programming\MINGW\mingw64\bin\ar.exe cr CMakeFiles\tutorial18_billboards.dir/objects.a @CMakeFiles\tutorial18_billboards.dir\objects1.rsp
+E:\Programs\programming\MINGW\mingw64\bin\g++.exe    -Wl,--whole-archive CMakeFiles\tutorial18_billboards.dir/objects.a -Wl,--no-whole-archive  -o tutorial18_billboards.exe -Wl,--out-implib,libtutorial18_billboards.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\tutorial18_billboards.dir\linklibs.rsp
