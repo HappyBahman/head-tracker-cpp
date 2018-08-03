@@ -34,6 +34,14 @@ int capture(PointType centers[], Mat frame){
     Mat opened_yellow;
     morphologyEx(yellow, opened_yellow, MORPH_OPEN, ell);
 
+    Mat el1 = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
+    morphologyEx(opened_yellow, opened_yellow, MORPH_ERODE, el1);
+    Mat el2 = getStructuringElement(MORPH_ELLIPSE, Size(12,12));
+    morphologyEx(opened_yellow, opened_yellow, MORPH_DILATE, el2);
+
+
+
+
 
 //    no need for opening
 //    Mat ell = getStructuringElement(MORPH_ELLIPSE, Size(10,10));
@@ -60,7 +68,6 @@ int capture(PointType centers[], Mat frame){
 //
 //
 //    imshow("final blue", opened_blue);
-    imshow("yellow", opened_yellow);
 
 
 //    ("blue", opened_blue);
@@ -68,7 +75,26 @@ int capture(PointType centers[], Mat frame){
     Mat yellow_centroids;
     Mat yellow_image_labeled;
     Mat yellow_stats;
+
+    imshow("yellow", opened_yellow);
+
     int yellow_label_n = connectedComponentsWithStats(opened_yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
+
+    if (yellow_label_n < 4){
+        cout<<"not enough markers found"<<endl;
+        return 0;
+    }
+    if(yellow_label_n > 4){
+        Mat el1 = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
+        morphologyEx(opened_yellow, opened_yellow, MORPH_ERODE, el1);
+        Mat el2 = getStructuringElement(MORPH_ELLIPSE, Size(12,12));
+        morphologyEx(opened_yellow, opened_yellow, MORPH_DILATE, el2);
+        yellow_label_n = connectedComponentsWithStats(opened_yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
+    }
+    if(yellow_label_n != 4){
+        cout<<"marker numbers don't match  "<<yellow_label_n<<endl;
+        return 0;
+    }
     for(int i=0;i<yellow_label_n - 1;i++){
         centers[i].x = yellow_centroids.at<double>(i + 1,0);
         centers[i].y = yellow_centroids.at<double>(i + 1,1);

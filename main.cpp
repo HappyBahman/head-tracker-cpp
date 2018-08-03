@@ -78,11 +78,11 @@ PointType Origin;
 
 double a[MARKERS_NUM];
 
-double a_history[MARKERS_NUM];
-double a_place_holder[MARKERS_NUM];
-Vctr q_place_holder[MARKERS_NUM];
-clock_t bad_res_begin;
-bool bad_res = false;
+//double a_history[MARKERS_NUM];
+//double a_place_holder[MARKERS_NUM];
+//Vctr q_place_holder[MARKERS_NUM];
+//clock_t bad_res_begin;
+//bool bad_res = false;
 
 bool has_estimation = false;
 double eye[MARKERS_NUM][MARKERS_NUM] = {
@@ -418,24 +418,25 @@ void stat_calib(Mat frame){
     }
     Vctr q[MARKERS_NUM];
 
-    capture(ABC_points, frame);
+    int capture_markers = capture(ABC_points, frame);
+    if(!capture_markers){
+        return;
+    }
     adjustABC(ABC_points, 163, 123);
 
-    if(bad_res){
+    for (int i = 0; i<MARKERS_NUM; i++){
+        q[i].x = ABC_points[i].x;
+        q[i].y = ABC_points[i].y;
+        q[i].z = -1 * focal_len;
+        double temp = sqrt(q[i].x * q[i].x + q[i].y * q[i].y + q[i].z * q[i].z);
+        q[i] = q[i] / temp;
 
-    } else{
-        for (int i = 0; i<MARKERS_NUM; i++){
-            q[i].x = ABC_points[i].x;
-            q[i].y = ABC_points[i].y;
-            q[i].z = -1 * focal_len;
-            double temp = sqrt(q[i].x * q[i].x + q[i].y * q[i].y + q[i].z * q[i].z);
-            q[i] = q[i] / temp;
-
-            q_place_holder[i].x = q[i].x;
-            q_place_holder[i].y = q[i].y;
-            q_place_holder[i].z = q[i].z;
-        }
+//        q_place_holder[i].x = q[i].x;
+//        q_place_holder[i].y = q[i].y;
+//        q_place_holder[i].z = q[i].z;
     }
+
+
     double t[MARKERS_NUM][MARKERS_NUM];
     for (int i = 0; i < MARKERS_NUM;i++){
         for (int j = 0; j<MARKERS_NUM; j++){
@@ -450,9 +451,9 @@ void stat_calib(Mat frame){
         a[1] = depth;
         a[2] = depth;
     }
-    for(int i =0;i<MARKERS_NUM; i++){
-        a_history[i] = a[i];
-    }
+//    for(int i =0;i<MARKERS_NUM; i++){
+//        a_history[i] = a[i];
+//    }
     double func[MARKERS_NUM][1] = { 10, 10, 10 };
     int itr = 0;
     double jac[MARKERS_NUM][MARKERS_NUM];
@@ -484,47 +485,44 @@ void stat_calib(Mat frame){
     has_estimation = true;
     Vctr A[MARKERS_NUM];
 
-    double diff = 0;
+//    double diff = 0;
+//    for(int i =0;i<MARKERS_NUM; i++){
+//        diff += abs(a_history[i] - a[i]);
+//    }
+
+//    if(diff > 150){
+//        bad_res = true;
+//        bad_res_begin = clock();
+//        for(int i =0;i<MARKERS_NUM; i++){
+//            a_place_holder[i] = a_history[i];
+//        }
+//        cout<<"diff? : "<<diff<<endl;
+//    }
+
+//    if(bad_res){
+//        cout<<"bad res"<<endl;
+//        for(int i =0;i<MARKERS_NUM; i++){
+//            A[i] = q_place_holder[i] * a_place_holder[i];
+//        }
+//
+//        for(int i =0;i<MARKERS_NUM; i++){
+//            diff += abs(a[i] - a_place_holder[i]);
+//        }
+//        if(diff < 150){
+//            bad_res = false;
+//        }
+//        clock_t now = clock();
+//        double elapsed_secs = double(now - bad_res_begin) / CLOCKS_PER_SEC;
+//        if (elapsed_secs > 3){
+//            bad_res = false;
+//        }
+//    }
     for(int i =0;i<MARKERS_NUM; i++){
-        diff += abs(a_history[i] - a[i]);
-    }
-
-    if(diff > 150){
-        bad_res = true;
-        bad_res_begin = clock();
-        for(int i =0;i<MARKERS_NUM; i++){
-            a_place_holder[i] = a_history[i];
-        }
-        cout<<"diff? : "<<diff<<endl;
-    }
-
-    if(bad_res){
-        cout<<"bad res"<<endl;
-        for(int i =0;i<MARKERS_NUM; i++){
-            A[i] = q_place_holder[i] * a_place_holder[i];
-        }
-
-        for(int i =0;i<MARKERS_NUM; i++){
-            diff += abs(a[i] - a_place_holder[i]);
-        }
-        if(diff < 150){
-            bad_res = false;
-        }
-        clock_t now = clock();
-        double elapsed_secs = double(now - bad_res_begin) / CLOCKS_PER_SEC;
-        if (elapsed_secs > 3){
-            bad_res = false;
-        }
-    }
-    else{
-        for(int i =0;i<MARKERS_NUM; i++){
-            A[i] = q[i] * a[i];
-        }
+        A[i] = q[i] * a[i];
     }
     results = (A[0] + A[1] + A[2])/(double)3;
-    cout<<"results : "<<results.x<<" "<<results.y<<" "<<results.z<<endl;
 
-//    cout<<results.x<<" "<<results.y<<" "<<results.z<<endl;
+    cout<<results.x<<" "<<results.y<<" "<<results.z<<endl;
 //    cout<<"static calib ended"<<endl;
 }
 
