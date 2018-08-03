@@ -19,7 +19,9 @@
 
 #include "detector.h"
 #include "PointType.h"
+#include "graphics.h"
 
+#include <ctime>
 
 using namespace std;
 using namespace cv;
@@ -67,11 +69,21 @@ struct Vctr {
 #define STEP 0.1
 #define LARGE_NUM 9e300
 
+
+
 //double f = 984.375;
 PointType XYZ[MARKERS_NUM];
 PointType ABC_points[MARKERS_NUM];
 PointType Origin;
+
 double a[MARKERS_NUM];
+
+double a_history[MARKERS_NUM];
+double a_place_holder[MARKERS_NUM];
+Vctr q_place_holder[MARKERS_NUM];
+clock_t bad_res_begin;
+bool bad_res = false;
+
 bool has_estimation = false;
 double eye[MARKERS_NUM][MARKERS_NUM] = {
         {1, 0, 0},
@@ -82,72 +94,72 @@ Vctr results;
 VideoCapture cap(4);
 
 
-GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
-GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
-GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
-        {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
-        {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
-GLint faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
-        {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
-        {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
-GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
-
-void drawBox(void)
-{
-    int i;
-
-    for (i = 0; i < 6; i++) {
-        glBegin(GL_QUADS);
-        glNormal3fv(&n[i][0]);
-        glVertex3fv(&v[faces[i][0]][0]);
-        glVertex3fv(&v[faces[i][1]][0]);
-        glVertex3fv(&v[faces[i][2]][0]);
-        glVertex3fv(&v[faces[i][3]][0]);
-        glEnd();
-    }
-}
-
-void display(void)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawBox();
-    glutSwapBuffers();
-}
-
-void init(void)
-{
-    /* Setup cube vertex data. */
-    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
-    v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
-    v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
-    v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
-    v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
-    v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
-
-    /* Enable a single OpenGL light. */
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
-
-    /* Use depth buffering for hidden surface elimination. */
-    glEnable(GL_DEPTH_TEST);
-
-    /* Setup the view of the cube. */
-    glMatrixMode(GL_PROJECTION);
-    gluPerspective( /* field of view in degree */ 40.0,
-            /* aspect ratio */ 1.0,
-            /* Z near */ 1.0, /* Z far */ 10.0);
-    glMatrixMode(GL_MODELVIEW);
-    gluLookAt(0.0, 0.0, 5.0,  /* eye is at (0,0,5) */
-              0.0, 0.0, 0.0,      /* center is at (0,0,0) */
-              0.0, 1.0, 0.);      /* up is in positive Y direction */
-
-    /* Adjust cube position to be asthetic angle. */
-    glTranslatef(0.0, 0.0, -1.0);
-    glRotatef(60, 1.0, 0.0, 0.0);
-    glRotatef(-20, 0.0, 0.0, 1.0);
-}
+//GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
+//GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
+//GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
+//        {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
+//        {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
+//GLint faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
+//        {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
+//        {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
+//GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
+//
+//void drawBox(void)
+//{
+//    int i;
+//
+//    for (i = 0; i < 6; i++) {
+//        glBegin(GL_QUADS);
+//        glNormal3fv(&n[i][0]);
+//        glVertex3fv(&v[faces[i][0]][0]);
+//        glVertex3fv(&v[faces[i][1]][0]);
+//        glVertex3fv(&v[faces[i][2]][0]);
+//        glVertex3fv(&v[faces[i][3]][0]);
+//        glEnd();
+//    }
+//}
+//
+//void display(void)
+//{
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    drawBox();
+//    glutSwapBuffers();
+//}
+//
+//void init(void)
+//{
+//    /* Setup cube vertex data. */
+//    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+//    v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+//    v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+//    v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+//    v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+//    v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
+//
+//    /* Enable a single OpenGL light. */
+//    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+//    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+//    glEnable(GL_LIGHT0);
+//    glEnable(GL_LIGHTING);
+//
+//    /* Use depth buffering for hidden surface elimination. */
+//    glEnable(GL_DEPTH_TEST);
+//
+//    /* Setup the view of the cube. */
+//    glMatrixMode(GL_PROJECTION);
+//    gluPerspective( /* field of view in degree */ 40.0,
+//            /* aspect ratio */ 1.0,
+//            /* Z near */ 1.0, /* Z far */ 10.0);
+//    glMatrixMode(GL_MODELVIEW);
+//    gluLookAt(0.0, 0.0, 5.0,  /* eye is at (0,0,5) */
+//              0.0, 0.0, 0.0,      /* center is at (0,0,0) */
+//              0.0, 1.0, 0.);      /* up is in positive Y direction */
+//
+//    /* Adjust cube position to be asthetic angle. */
+//    glTranslatef(0.0, 0.0, -1.0);
+//    glRotatef(60, 1.0, 0.0, 0.0);
+//    glRotatef(-20, 0.0, 0.0, 1.0);
+//}
 
 
 
@@ -371,10 +383,10 @@ void init_setting() {
     Origin.x = 0;
     Origin.y = 0;
     Origin.z = 0;
-// 13 8 6
-    double a = 60;
-    double b = 130;
-    double c = 80;
+// 13 8
+    double a = 40;
+    double b = 70;
+    double c = 60;
     double p = (a + b + c)/2;
     double s = sqrt(p * (p-a) * (p-b) * (p-c));
     double h = (s * 2)/a;
@@ -394,9 +406,10 @@ void init_setting() {
 }
 
 void stat_calib(Mat frame){
-    cout<<"stat_calib"<<endl;
+//    cout<<"stat_calib"<<endl;
     init_setting();
     // pre-processing:
+
     double d[MARKERS_NUM][MARKERS_NUM];
     for (int i = 0; i < MARKERS_NUM; i++){
         for (int j = 0; j < MARKERS_NUM; j++){
@@ -408,12 +421,20 @@ void stat_calib(Mat frame){
     capture(ABC_points, frame);
     adjustABC(ABC_points, 163, 123);
 
-    for (int i = 0; i<MARKERS_NUM; i++){
-        q[i].x = ABC_points[i].x;
-        q[i].y = ABC_points[i].y;
-        q[i].z = -1 * focal_len;
-        double temp = sqrt(q[i].x * q[i].x + q[i].y * q[i].y + q[i].z * q[i].z);
-        q[i] = q[i] / temp;
+    if(bad_res){
+
+    } else{
+        for (int i = 0; i<MARKERS_NUM; i++){
+            q[i].x = ABC_points[i].x;
+            q[i].y = ABC_points[i].y;
+            q[i].z = -1 * focal_len;
+            double temp = sqrt(q[i].x * q[i].x + q[i].y * q[i].y + q[i].z * q[i].z);
+            q[i] = q[i] / temp;
+
+            q_place_holder[i].x = q[i].x;
+            q_place_holder[i].y = q[i].y;
+            q_place_holder[i].z = q[i].z;
+        }
     }
     double t[MARKERS_NUM][MARKERS_NUM];
     for (int i = 0; i < MARKERS_NUM;i++){
@@ -428,6 +449,9 @@ void stat_calib(Mat frame){
         a[0] = depth;
         a[1] = depth;
         a[2] = depth;
+    }
+    for(int i =0;i<MARKERS_NUM; i++){
+        a_history[i] = a[i];
     }
     double func[MARKERS_NUM][1] = { 10, 10, 10 };
     int itr = 0;
@@ -457,14 +481,51 @@ void stat_calib(Mat frame){
             fap[i][0] = func[i][0];
         }
     }
-
+    has_estimation = true;
     Vctr A[MARKERS_NUM];
+
+    double diff = 0;
     for(int i =0;i<MARKERS_NUM; i++){
-        A[i] = q[i] * a[i];
+        diff += abs(a_history[i] - a[i]);
+    }
+
+    if(diff > 150){
+        bad_res = true;
+        bad_res_begin = clock();
+        for(int i =0;i<MARKERS_NUM; i++){
+            a_place_holder[i] = a_history[i];
+        }
+        cout<<"diff? : "<<diff<<endl;
+    }
+
+    if(bad_res){
+        cout<<"bad res"<<endl;
+        for(int i =0;i<MARKERS_NUM; i++){
+            A[i] = q_place_holder[i] * a_place_holder[i];
+        }
+
+        for(int i =0;i<MARKERS_NUM; i++){
+            diff += abs(a[i] - a_place_holder[i]);
+        }
+        if(diff < 150){
+            bad_res = false;
+        }
+        clock_t now = clock();
+        double elapsed_secs = double(now - bad_res_begin) / CLOCKS_PER_SEC;
+        if (elapsed_secs > 3){
+            bad_res = false;
+        }
+    }
+    else{
+        for(int i =0;i<MARKERS_NUM; i++){
+            A[i] = q[i] * a[i];
+        }
     }
     results = (A[0] + A[1] + A[2])/(double)3;
-    cout<<results.x<<" "<<results.y<<" "<<results.z<<endl;
+    cout<<"results : "<<results.x<<" "<<results.y<<" "<<results.z<<endl;
 
+//    cout<<results.x<<" "<<results.y<<" "<<results.z<<endl;
+//    cout<<"static calib ended"<<endl;
 }
 
 Vctr camera_location;
@@ -481,41 +542,66 @@ void renderScene(void) {
 //    make camera look at the origin with angle
     // Set the camera
 
-    camera_location = (camera_location + results)/2;
+//    camera_location = (camera_location + results)/2;
+    camera_location = results;
+    cout<<camera_location.x<<" "<<camera_location.y<<" "<<camera_location.z<<" "<<endl;
 
-    gluLookAt(	camera_location.x / (-10), camera_location.y / (-10), camera_location.z / (-1 * 10 * 4),
-                  0, 0.0f,  0,
-                  0.0f, 1.0f,  0.0f);
+//    gluLookAt(	camera_location.x / (-10), camera_location.y / (10 * 5), camera_location.z / (-1 * 10 * 8),
+    gluLookAt(camera_location.x / (- 20), camera_location.y / (20), camera_location.z/(-30),
+              0.0f, 0.0f,  0.0f,
+              0.0f, 1.0f,  0.0f);
 
-    drawBox();
+//    drawBox();
+    glTranslatef(1.5f, 0.0f, 0.0f);  // Move right and into the screen
+    draw_box();
+    glTranslatef(-1.5f, 0.0f, 0.0f);  // Move left and into the screen
+    draw_pyra();
     glutSwapBuffers();
     usleep(50000);
-    cout<<"rendered"<<endl;
 
 }
 
-void start_gl(int argc, char **argv){
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutCreateWindow("red 3D lighted cube");
-    glutDisplayFunc(display);
-    init();
+//void start_gl(int argc, char **argv){
+//    glutInit(&argc, argv);
+//    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+//    glutCreateWindow("red 3D lighted cube");
+//    glutDisplayFunc(display);
+//    init();
+//    glutIdleFunc(renderScene);
+//    glutMainLoop();
+//}
+
+
+
+/* Main function: GLUT runs as a console application starting at main() */
+int start_gl(int argc, char** argv) {
+    glutInit(&argc, argv);            // Initialize GLUT
+    glutInitDisplayMode(GLUT_DOUBLE); // Enable double buffered mode
+    glutInitWindowSize(640, 480);   // Set the window's initial width & height
+    glutInitWindowPosition(50, 50); // Position the window's initial top-left corner
+    glutCreateWindow("scene");          // Create window with the given title
+    glutDisplayFunc(display);       // Register callback handler for window re-paint event
+    glutReshapeFunc(reshape);       // Register callback handler for window re-size event
+    initGL();                       // Our own OpenGL initialization
     glutIdleFunc(renderScene);
-    glutMainLoop();
+    glutMainLoop();                 // Enter the infinite event-processing loop
+    return 0;
 }
+
 
 int main(int argc, char **argv){
-    results.x = 60;
     results.y = -50;
     results.z = -200;
     camera_location.x = 60;
     camera_location.y = -50;
     camera_location.z = -200;
-    // open the default camera, use something different from 0 otherwise;
-    // Check VideoCapture documentation.
+//    // open the default camera, use something different from 0 otherwise;
+//    // Check VideoCapture documentation.
     std::thread gl_thread(start_gl,argc, argv);
-    if(!cap.open(0))
+    if(!cap.open(0)) {
+        cout << "no frame" << endl;
         return 0;
+    }
     for(;;){
         Mat frame;
         cap >> frame;
@@ -523,14 +609,17 @@ int main(int argc, char **argv){
         stat_calib(frame);
 //        imshow("this is you, smile! :)", frame);
         if( waitKey(10) == 'x' ) break; // stop capturing by pressing ESC
-        usleep(5000);
-
+        usleep(50000);
     }
 
+    //    main_graphics_function(argc, argv);
 
     // the camera will be closed
     return 0;
 }
+
+
+
 
 
 

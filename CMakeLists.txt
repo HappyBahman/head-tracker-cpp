@@ -11,7 +11,7 @@ include_directories(${OPENGL_INCLUDE_DIR}  ${GLUT_INCLUDE_DIRS})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-SET(SOURCE_FILES main.cpp detector.cpp detector.h PointType.cpp PointType.h)
+SET(SOURCE_FILES main.cpp detector.cpp detector.h PointType.cpp PointType.h graphics.cpp graphics.h)
 
 set(GLUT_INCLUDE_DIRS )
 
