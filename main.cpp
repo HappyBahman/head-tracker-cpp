@@ -485,38 +485,6 @@ void stat_calib(Mat frame){
     has_estimation = true;
     Vctr A[MARKERS_NUM];
 
-//    double diff = 0;
-//    for(int i =0;i<MARKERS_NUM; i++){
-//        diff += abs(a_history[i] - a[i]);
-//    }
-
-//    if(diff > 150){
-//        bad_res = true;
-//        bad_res_begin = clock();
-//        for(int i =0;i<MARKERS_NUM; i++){
-//            a_place_holder[i] = a_history[i];
-//        }
-//        cout<<"diff? : "<<diff<<endl;
-//    }
-
-//    if(bad_res){
-//        cout<<"bad res"<<endl;
-//        for(int i =0;i<MARKERS_NUM; i++){
-//            A[i] = q_place_holder[i] * a_place_holder[i];
-//        }
-//
-//        for(int i =0;i<MARKERS_NUM; i++){
-//            diff += abs(a[i] - a_place_holder[i]);
-//        }
-//        if(diff < 150){
-//            bad_res = false;
-//        }
-//        clock_t now = clock();
-//        double elapsed_secs = double(now - bad_res_begin) / CLOCKS_PER_SEC;
-//        if (elapsed_secs > 3){
-//            bad_res = false;
-//        }
-//    }
     for(int i =0;i<MARKERS_NUM; i++){
         A[i] = q[i] * a[i];
     }
@@ -545,13 +513,27 @@ void renderScene(void) {
 //    cout<<camera_location.x<<" "<<camera_location.y<<" "<<camera_location.z<<" "<<endl;
 
 //    gluLookAt(	camera_location.x / (-10), camera_location.y / (10 * 5), camera_location.z / (-1 * 10 * 8),
-    gluLookAt(camera_location.x / (- 20), camera_location.y / (20), camera_location.z/(-30),
+    gluLookAt(camera_location.x / (- 55), camera_location.y / (55), camera_location.z/(-55),
               0.0f, 0.0f,  0.0f,
               0.0f, 1.0f,  0.0f);
 
 //    drawBox();
     glTranslatef(1.5f, 0.0f, 0.0f);  // Move right and into the screen
-    draw_box();
+    PointType origin;
+    origin.x = 0;
+    origin.y = 0;
+    origin.z = 0;
+    draw_box(origin);
+
+    origin.x = 3;
+    origin.y = 0;
+    origin.z = 0;
+    draw_box(origin);
+
+    origin.x = -3;
+    origin.y = 0;
+    origin.z = 0;
+    draw_box(origin);
     glTranslatef(-1.5f, 0.0f, 0.0f);  // Move left and into the screen
     draw_pyra();
     glutSwapBuffers();

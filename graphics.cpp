@@ -1,5 +1,6 @@
 #include <windows.h>  // for MS Windows
 #include <GL/glut.h>  // GLUT, include glu.h and gl.h
+#include "PointType.h"
 
 /* Initialize OpenGL Graphics */
 void initGL() {
@@ -12,50 +13,50 @@ void initGL() {
 }
 
 
-void draw_box(){
+void draw_box(PointType origin){
     glBegin(GL_QUADS);                // Begin drawing the color cube with 6 quads
     // Top face (y = 1.0f)
     // Define vertices in counter-clockwise (CCW) order with normal pointing out
     glColor3f(0.0f, 1.0f, 0.0f);     // Green
-    glVertex3f( 1.0f, 1.0f, -1.0f);
-    glVertex3f(-1.0f, 1.0f, -1.0f);
-    glVertex3f(-1.0f, 1.0f,  1.0f);
-    glVertex3f( 1.0f, 1.0f,  1.0f);
+    glVertex3f( 1.0f + origin.x, 1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, 1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, 1.0f + origin.y,  1.0f + origin.z);
+    glVertex3f( 1.0f + origin.x, 1.0f + origin.y,  1.0f + origin.z);
 
     // Bottom face (y = -1.0f)
     glColor3f(1.0f, 0.5f, 0.0f);     // Orange
-    glVertex3f( 1.0f, -1.0f,  1.0f);
-    glVertex3f(-1.0f, -1.0f,  1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f( 1.0f, -1.0f, -1.0f);
+    glVertex3f( 1.0f + origin.x, -1.0f + origin.y,  1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, -1.0f + origin.y,  1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, -1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f( 1.0f + origin.x, -1.0f + origin.y, -1.0f + origin.z);
 
     // Front face  (z = 1.0f)
     glColor3f(1.0f, 0.0f, 0.0f);     // Red
-    glVertex3f( 1.0f,  1.0f, 1.0f);
-    glVertex3f(-1.0f,  1.0f, 1.0f);
-    glVertex3f(-1.0f, -1.0f, 1.0f);
-    glVertex3f( 1.0f, -1.0f, 1.0f);
+    glVertex3f( 1.0f + origin.x,  1.0f + origin.y, 1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x,  1.0f + origin.y, 1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, -1.0f + origin.y, 1.0f + origin.z);
+    glVertex3f( 1.0f + origin.x, -1.0f + origin.y, 1.0f + origin.z);
 
     // Back face (z = -1.0f)
-    glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
-    glVertex3f( 1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f,  1.0f, -1.0f);
-    glVertex3f( 1.0f,  1.0f, -1.0f);
+    glColor3f(1.0f + origin.x, 1.0f + origin.y, 0.0f + origin.z);     // Yellow
+    glVertex3f( 1.0f + origin.x, -1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, -1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x,  1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f( 1.0f + origin.x,  1.0f + origin.y, -1.0f + origin.z);
 
     // Left face (x = -1.0f)
     glColor3f(0.0f, 0.0f, 1.0f);     // Blue
-    glVertex3f(-1.0f,  1.0f,  1.0f);
-    glVertex3f(-1.0f,  1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f, -1.0f);
-    glVertex3f(-1.0f, -1.0f,  1.0f);
+    glVertex3f(-1.0f + origin.x,  1.0f + origin.y,  1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x,  1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, -1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(-1.0f + origin.x, -1.0f + origin.y,  1.0f + origin.z);
 
     // Right face (x = 1.0f)
     glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
-    glVertex3f(1.0f,  1.0f, -1.0f);
-    glVertex3f(1.0f,  1.0f,  1.0f);
-    glVertex3f(1.0f, -1.0f,  1.0f);
-    glVertex3f(1.0f, -1.0f, -1.0f);
+    glVertex3f(1.0f + origin.x,  1.0f + origin.y, -1.0f + origin.z);
+    glVertex3f(1.0f + origin.x,  1.0f + origin.y,  1.0f + origin.z);
+    glVertex3f(1.0f + origin.x, -1.0f + origin.y,  1.0f + origin.z);
+    glVertex3f(1.0f + origin.x, -1.0f + origin.y, -1.0f + origin.z);
     glEnd();  // End of drawing color-cube
 }
 
@@ -105,7 +106,17 @@ void display() {
     glLoadIdentity();                 // Reset the model-view matrix
     glTranslatef(1.5f, 0.0f, -7.0f);  // Move right and into the screen
 
-    draw_box();
+    PointType origin;
+    origin.x = 0;
+    origin.y = 0;
+    origin.z = 0;
+    draw_box(origin);
+
+    origin.x = 3;
+    origin.y = 0;
+    origin.z = 0;
+    draw_box(origin);
+
     // Render a pyramid consists of 4 triangles
     glLoadIdentity();                  // Reset the model-view matrix
     glTranslatef(-1.5f, 0.0f, -6.0f);  // Move left and into the screen

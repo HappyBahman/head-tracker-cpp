@@ -14,7 +14,7 @@ using namespace cv;
 void display();
 void reshape(GLsizei width, GLsizei height);
 void initGL();
-void draw_box();
+void draw_box(PointType origin);
 void draw_pyra();
 
 #endif //SOMETHING_GRAPHICS_H
