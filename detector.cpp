@@ -28,68 +28,152 @@ int capture(PointType centers[], Mat frame){
     imshow("this is you, smile! :)", frame);
 
     Mat yellow = (planes[2] + planes[1])/2 - planes[0];
-    yellow = yellow > 150;
 
-    Mat ell = getStructuringElement(MORPH_ELLIPSE, Size(5,5));
-    Mat opened_yellow;
-    morphologyEx(yellow, opened_yellow, MORPH_OPEN, ell);
+    yellow = yellow > 150;
+//    Mat ell_rect = getStructuringElement(MORPH_RECT, Size(10,10));
+
+//    dilate(yellow,yellow, ell_rect);
 
     Mat el1 = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
-    morphologyEx(opened_yellow, opened_yellow, MORPH_ERODE, el1);
+    morphologyEx(yellow, yellow, MORPH_ERODE, el1);
     Mat el2 = getStructuringElement(MORPH_ELLIPSE, Size(12,12));
-    morphologyEx(opened_yellow, opened_yellow, MORPH_DILATE, el2);
+    morphologyEx(yellow, yellow, MORPH_DILATE, el2);
 
-
-
-
-
-//    no need for opening
-//    Mat ell = getStructuringElement(MORPH_ELLIPSE, Size(10,10));
-//    Mat opened_yellow;
-//    yellow = yellow > 0;
-//    morphologyEx(yellow, opened_yellow, MORPH_OPEN, ell);
-
-//    for detecting white areas, not needed anymore, kept in comment just in case
-//    Mat gray;
-//    cvtColor( frame, gray, CV_BGR2GRAY );
-//    Mat ell_th = getStructuringElement(MORPH_ELLIPSE, Size(35,35));
-//    Mat th;
-//    Mat opened_white_th;
-//    morphologyEx(gray, th, MORPH_TOPHAT, ell_th);
-//    Mat white_th = th > 100;
-//    white_th = white_th - yellow;
-//    white_th = white_th > 0;
-//    morphologyEx(white_th, opened_white_th, MORPH_OPEN, ell);
-
-//    Mat blue = planes[0] - planes[2];
-//    blue = blue > 30;
-//    Mat opened_blue;
-//    morphologyEx(blue, opened_blue, MORPH_OPEN, ell);
-//
-//
-//    imshow("final blue", opened_blue);
-
-
-//    ("blue", opened_blue);
 
     Mat yellow_centroids;
     Mat yellow_image_labeled;
     Mat yellow_stats;
+    int yellow_label_n = connectedComponentsWithStats(yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
 
-    imshow("yellow", opened_yellow);
-
-    int yellow_label_n = connectedComponentsWithStats(opened_yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
+//    for( int i = 0; i< contours.size(); i++ )
+//    {
+//        double area = contourArea(contours[i]);
+//        double perimeter = arcLength(contours[i],true);
+//        cout<<"area : "<<area<<endl;
+//        cout<<"perim : "<<perimeter<<endl;
+//
+//    }
 
     if (yellow_label_n < 4){
         cout<<"not enough markers found"<<endl;
         return 0;
     }
     if(yellow_label_n > 4){
-        Mat el1 = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
-        morphologyEx(opened_yellow, opened_yellow, MORPH_ERODE, el1);
-        Mat el2 = getStructuringElement(MORPH_ELLIPSE, Size(12,12));
-        morphologyEx(opened_yellow, opened_yellow, MORPH_DILATE, el2);
-        yellow_label_n = connectedComponentsWithStats(opened_yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
+        Mat opened_yellow;
+        vector<vector<Point> > contours;
+        vector<Vec4i> hierarchy;
+
+        /// Find contours
+        findContours( yellow, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+        /// Show in a window
+
+        double max_compactness[3] = {-1, -1, -1};
+        int max_ind[3] = {-1,-1,-1};
+        int cnt_cnt = 0;
+
+        for( int i = 0; i< contours.size(); i++ )
+        {
+            double area = contourArea(contours[i]);
+            double perimeter = arcLength(contours[i],true);
+            double compactness = area/(perimeter * perimeter);
+            if(compactness > max_compactness[0]){
+                cnt_cnt++;
+                max_compactness[2] = max_compactness[1];
+                max_ind[2] = max_ind[1];
+                max_compactness[1] = max_compactness[0];
+                max_ind[1] = max_ind[0];
+                max_compactness[0] = compactness;
+                max_ind[0] = i;
+            }else if(compactness > max_compactness[1]){
+                cnt_cnt++;
+                max_compactness[2] = max_compactness[1];
+                max_ind[2] = max_ind[1];
+                max_compactness[1] = compactness;
+                max_ind[1] = i;
+            }else if(compactness > max_compactness[2]){
+                cnt_cnt++;
+                max_compactness[2] = compactness;
+                max_ind[2] = i;
+            }
+        }
+
+        if(cnt_cnt >= 3 ){
+
+            Mat drawing = Mat::zeros( yellow.size(), CV_8UC1 );
+            RNG rng(12345);
+            for( int i = 0; i< 3; i++ )
+            {
+                Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255));
+//            Scalar color = Scalar( 255, 255, 255 );
+                drawContours( drawing, contours, max_ind[i], color, 2, 8, hierarchy, 0);
+
+                double area = contourArea(contours[max_ind[i]]);
+                double perimeter = arcLength(contours[max_ind[i]],true);
+                double compactness = area/(perimeter * perimeter);
+                cout<<compactness<<" "<<area<<" "<<" "<<perimeter<<endl;
+
+
+            }
+//        dilate(drawing, drawing, ell);
+            Mat temp;
+            Mat rec_ell = getStructuringElement(MORPH_ELLIPSE, Size(5,5));
+            do{
+                temp = drawing.clone();
+                dilate(drawing, opened_yellow, rec_ell); // normal dilation
+                min(yellow, opened_yellow, drawing); // masking operation
+            }while(!countNonZero(drawing != temp) == 0);
+        }
+        yellow_label_n = connectedComponentsWithStats(yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
+
+//        double max_compactness[3] = {-1, -1, -1};
+//        int max_ind[3] = {-1,-1,-1};
+//        vector<vector<Point> > contours;
+//        vector<Vec4i> hierarchy;
+//
+//        /// Find contours
+//        findContours( opened_yellow, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+//        /// Show in a window
+//
+//        for( int i = 0; i< contours.size(); i++ )
+//        {
+//            double area = contourArea(contours[i]);
+//            double perimeter = arcLength(contours[i],true);
+//             double compactness = area/(perimeter * perimeter);
+//            if(compactness > max_compactness[0]){
+//                max_compactness[2] = max_compactness[1];
+//                max_ind[2] = max_ind[1];
+//                max_compactness[1] = max_compactness[0];
+//                max_ind[1] = max_ind[0];
+//                max_compactness[0] = compactness;
+//                max_ind[0] = i;
+//            }else if(compactness > max_compactness[1]){
+//                max_compactness[2] = max_compactness[1];
+//                max_ind[2] = max_ind[1];
+//                max_compactness[1] = compactness;
+//                max_ind[1] = i;
+//            }else if(compactness > max_compactness[2]){
+//                max_compactness[2] = compactness;
+//                max_ind[2] = i;
+//            }
+//        }
+//
+//        Mat drawing = Mat::zeros( opened_yellow.size(), CV_8UC1);
+//        RNG rng(12345);
+//        for( int i = 0; i< 3; i++ )
+//        {
+//            Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+//            drawContours( drawing, contours, max_ind[i], color, 2, 8, hierarchy, 0, Point() );
+//        }
+//
+//        namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
+//        imshow( "Contours", drawing );
+
+
+//        Mat el1 = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
+//        morphologyEx(opened_yellow, opened_yellow, MORPH_ERODE, el1);
+//        Mat el2 = getStructuringElement(MORPH_ELLIPSE, Size(12,12));
+//        morphologyEx(opened_yellow, opened_yellow, MORPH_DILATE, el2);
+//        yellow_label_n = connectedComponentsWithStats(opened_yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
     }
     if(yellow_label_n != 4){
         cout<<"marker numbers don't match  "<<yellow_label_n<<endl;
@@ -104,31 +188,7 @@ int capture(PointType centers[], Mat frame){
     }
 
 
-//    Mat blue_centroids;
-//    Mat blue_image_labeled;
-//    Mat blue_stats;
-//    int blue_label_n = connectedComponentsWithStats(opened_blue, blue_image_labeled, blue_stats, blue_centroids);
-//    for(int i=0;i<blue_label_n - 1;i++){
-//        centers[i + yellow_label_n - 1].x = blue_centroids.at<double>(i + 1,0);
-//        centers[i + yellow_label_n - 1].y = blue_centroids.at<double>(i + 1,1);
-//        centers[i].z = focal_len;
-//
-////        cout<<"blue "<<centers[i + yellow_label_n - 1].x<<"  "<<centers[i + yellow_label_n - 1].y<<endl;
-//    }
 
-
-//        put A, B and C in correct order:
-//        A = far yellow, B= middle yellow, C = blue
-
-//    if(abs(centers[0].x - centers[2].x) < abs(centers[1].x - centers[2].x)){
-//        PointType temp = centers[0];
-//        centers[0] = centers[1];
-//        centers[1] = temp;
-//    }
-
-//      rightmost marker = biggest x = C
-//      highest marker = A
-//      middle marker = B
     if(centers[1].x < centers[0].x and centers[1].x < centers[2].x){
         PointType temp = centers[0];
         centers[0] = centers[1];

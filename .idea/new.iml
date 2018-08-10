@@ -5,10 +5,12 @@
       <sourceFolder url="file://$MODULE_DIR$/Programs/programming/opencv/build2/OpenCVConfig-version.cmake" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Programs/programming/opencv/build2/OpenCVConfig.cmake" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Programs/programming/opencv/build2/OpenCVModules.cmake" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/graphics.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/PointType.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/detector.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/detector.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/graphics.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/PointType.h" isTestSource="false" />
     </content>

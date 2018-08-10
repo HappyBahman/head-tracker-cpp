@@ -522,7 +522,7 @@ void stat_calib(Mat frame){
     }
     results = (A[0] + A[1] + A[2])/(double)3;
 
-    cout<<results.x<<" "<<results.y<<" "<<results.z<<endl;
+//    cout<<results.x<<" "<<results.y<<" "<<results.z<<endl;
 //    cout<<"static calib ended"<<endl;
 }
 
@@ -542,7 +542,7 @@ void renderScene(void) {
 
 //    camera_location = (camera_location + results)/2;
     camera_location = results;
-    cout<<camera_location.x<<" "<<camera_location.y<<" "<<camera_location.z<<" "<<endl;
+//    cout<<camera_location.x<<" "<<camera_location.y<<" "<<camera_location.z<<" "<<endl;
 
 //    gluLookAt(	camera_location.x / (-10), camera_location.y / (10 * 5), camera_location.z / (-1 * 10 * 8),
     gluLookAt(camera_location.x / (- 20), camera_location.y / (20), camera_location.z/(-30),
