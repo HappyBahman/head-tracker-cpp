@@ -122,59 +122,12 @@ int capture(PointType centers[], Mat frame){
                 dilate(drawing, opened_yellow, rec_ell); // normal dilation
                 min(yellow, opened_yellow, drawing); // masking operation
             }while(!countNonZero(drawing != temp) == 0);
+            yellow = drawing.clone();
         }
         yellow_label_n = connectedComponentsWithStats(yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
-
-//        double max_compactness[3] = {-1, -1, -1};
-//        int max_ind[3] = {-1,-1,-1};
-//        vector<vector<Point> > contours;
-//        vector<Vec4i> hierarchy;
-//
-//        /// Find contours
-//        findContours( opened_yellow, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
-//        /// Show in a window
-//
-//        for( int i = 0; i< contours.size(); i++ )
-//        {
-//            double area = contourArea(contours[i]);
-//            double perimeter = arcLength(contours[i],true);
-//             double compactness = area/(perimeter * perimeter);
-//            if(compactness > max_compactness[0]){
-//                max_compactness[2] = max_compactness[1];
-//                max_ind[2] = max_ind[1];
-//                max_compactness[1] = max_compactness[0];
-//                max_ind[1] = max_ind[0];
-//                max_compactness[0] = compactness;
-//                max_ind[0] = i;
-//            }else if(compactness > max_compactness[1]){
-//                max_compactness[2] = max_compactness[1];
-//                max_ind[2] = max_ind[1];
-//                max_compactness[1] = compactness;
-//                max_ind[1] = i;
-//            }else if(compactness > max_compactness[2]){
-//                max_compactness[2] = compactness;
-//                max_ind[2] = i;
-//            }
-//        }
-//
-//        Mat drawing = Mat::zeros( opened_yellow.size(), CV_8UC1);
-//        RNG rng(12345);
-//        for( int i = 0; i< 3; i++ )
-//        {
-//            Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-//            drawContours( drawing, contours, max_ind[i], color, 2, 8, hierarchy, 0, Point() );
-//        }
-//
-//        namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
-//        imshow( "Contours", drawing );
-
-
-//        Mat el1 = getStructuringElement(MORPH_ELLIPSE, Size(2,2));
-//        morphologyEx(opened_yellow, opened_yellow, MORPH_ERODE, el1);
-//        Mat el2 = getStructuringElement(MORPH_ELLIPSE, Size(12,12));
-//        morphologyEx(opened_yellow, opened_yellow, MORPH_DILATE, el2);
-//        yellow_label_n = connectedComponentsWithStats(opened_yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
     }
+
+    imshow("yellow", yellow);
     if(yellow_label_n != 4){
         cout<<"marker numbers don't match  "<<yellow_label_n<<endl;
         return 0;
