@@ -29,6 +29,8 @@ int capture(PointType centers[], Mat frame){
 
     Mat yellow = (planes[2] + planes[1])/2 - planes[0];
 
+    imshow("yellow gray", yellow);
+
     yellow = yellow > 150;
 //    Mat ell_rect = getStructuringElement(MORPH_RECT, Size(10,10));
 

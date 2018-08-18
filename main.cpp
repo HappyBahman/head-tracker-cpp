@@ -66,6 +66,7 @@ struct Vctr {
 #define focal_len 984.375
 //#define focal_len 412.
 #define MARKERS_NUM 3
+#define FRAME_RATE 10000
 #define STEP 0.1
 #define LARGE_NUM 9e300
 
@@ -512,8 +513,10 @@ void renderScene(void) {
     camera_location = results;
 //    cout<<camera_location.x<<" "<<camera_location.y<<" "<<camera_location.z<<" "<<endl;
 
+    float ratio = -115;
+    float constant_z = 10;
 //    gluLookAt(	camera_location.x / (-10), camera_location.y / (10 * 5), camera_location.z / (-1 * 10 * 8),
-    gluLookAt(camera_location.x / (- 55), camera_location.y / (55), camera_location.z/(-55),
+    gluLookAt(camera_location.x / (ratio), camera_location.y / (-1 * ratio), camera_location.z/(ratio) + constant_z,
               0.0f, 0.0f,  0.0f,
               0.0f, 1.0f,  0.0f);
 
@@ -534,10 +537,63 @@ void renderScene(void) {
     origin.y = 0;
     origin.z = 0;
     draw_box(origin);
+
+    origin.x = 1.5;
+    origin.y = 5.5;
+    origin.z = -9;
+    draw_box(origin);
+
+    origin.x = -1.5;
+    origin.y = 5.5;
+    origin.z = -9;
+    draw_box(origin);
+
+    origin.x = 1.5;
+    origin.y = -3.5;
+    origin.z = -6;
+    draw_box(origin);
+
+    origin.x = -1.5;
+    origin.y = -3.5;
+    origin.z = -6;
+    draw_box(origin);
+
+    origin.x = 4.5;
+    origin.y = 0.5;
+    origin.z = -12;
+    draw_box(origin);
+
+    origin.x = -4.5;
+    origin.y = 0.5;
+    origin.z = -12;
+    draw_box(origin);
+
+    origin.x = 4.5;
+    origin.y = 4.5;
+    origin.z = -12;
+    draw_box(origin);
+
+    origin.x = -4.5;
+    origin.y = 4.5;
+    origin.z = -12;
+    draw_box(origin);
+
+
+    origin.x = 4.5;
+    origin.y = -4.5;
+    origin.z = -12;
+    draw_box(origin);
+
+    origin.x = -4.5;
+    origin.y = -4.5;
+    origin.z = -12;
+    draw_box(origin);
+
+
     glTranslatef(-1.5f, 0.0f, 0.0f);  // Move left and into the screen
     draw_pyra();
     glutSwapBuffers();
-    usleep(50000);
+    usleep(FRAME_RATE);
 
 }
 
@@ -589,7 +645,7 @@ int main(int argc, char **argv){
         stat_calib(frame);
 //        imshow("this is you, smile! :)", frame);
         if( waitKey(10) == 'x' ) break; // stop capturing by pressing ESC
-        usleep(50000);
+        usleep(FRAME_RATE);
     }
 
     //    main_graphics_function(argc, argv);
