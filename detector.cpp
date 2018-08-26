@@ -18,7 +18,7 @@ using namespace cv;
 
 int capture(PointType centers[], Mat frame){
     int filterSize = 5;
-    IplConvKernel *convKernel = cvCreateStructuringElementEx(filterSize, filterSize, (filterSize - 1) / 2, (filterSize - 1) / 2, CV_SHAPE_RECT, NULL);
+//    IplConvKernel *convKernel = cvCreateStructuringElementEx(filterSize, filterSize, (filterSize - 1) / 2, (filterSize - 1) / 2, CV_SHAPE_RECT, NULL);
 
     VideoCapture cap(4);
     // open the default camera, use something different from 0 otherwise;
@@ -27,11 +27,26 @@ int capture(PointType centers[], Mat frame){
     split(frame, planes);
     imshow("this is you, smile! :)", frame);
 
-    Mat yellow = (planes[2] + planes[1])/2 - planes[0];
+//    Mat yellow = (planes[2] + planes[1])/2 - planes[0];
+    Mat yellow = (planes[0]) - planes[2];
+    Mat bg = (planes[2]) + (255 - planes[0]);
+//    Mat blue = planes[0];
 
-    imshow("yellow gray", yellow);
+    imshow("blue - red", yellow);
+    imshow("red - blue", bg);
 
-    yellow = yellow > 150;
+//    imshow("green", planes[1]);
+//    imshow("blue", planes[0]);
+//    imshow("red", planes[2]);
+
+    yellow = yellow > 50;
+    bg = bg < 50;
+
+    imshow("blue - red thr", yellow);
+    imshow("red - blue thr", bg);
+
+
+
 //    Mat ell_rect = getStructuringElement(MORPH_RECT, Size(10,10));
 
 //    dilate(yellow,yellow, ell_rect);
@@ -129,7 +144,7 @@ int capture(PointType centers[], Mat frame){
         yellow_label_n = connectedComponentsWithStats(yellow, yellow_image_labeled, yellow_stats, yellow_centroids);
     }
 
-    imshow("yellow", yellow);
+//    imshow("yellow", yellow);
     if(yellow_label_n != 4){
         cout<<"marker numbers don't match  "<<yellow_label_n<<endl;
         return 0;

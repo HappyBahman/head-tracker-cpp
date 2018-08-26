@@ -633,7 +633,7 @@ int main(int argc, char **argv){
     camera_location.z = -200;
 //    // open the default camera, use something different from 0 otherwise;
 //    // Check VideoCapture documentation.
-    std::thread gl_thread(start_gl,argc, argv);
+//    std::thread gl_thread(start_gl,argc, argv);
     if(!cap.open(0)) {
         cout << "no frame" << endl;
         return 0;
